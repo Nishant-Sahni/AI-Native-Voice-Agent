@@ -1,0 +1,49 @@
+[ASK_MENU]
+Yes, sir. We do serve a variety of vegetarian dishes including Dal Tadka, Paneer Butter Masala, Roti, Rice, and seasonal specials. Infact, Our in-room dining service is available during restaurant hours.
+
+[ASK_BREAKFAST]
+Yes, breakfast is included with most room bookings. Breakfast is served daily from 7:30 AM to 10:30 AM in our restaurant.
+
+[ASK_ROOM_PRICE]
+Sir, Our room prices start at ₹1500 per night for a Standard Room and ₹2200 per night for a Deluxe Room.But, Prices may vary depending on availability and season.
+
+[ASK_ROOM_AVAILABILITY]
+Room availability depends on the date and current bookings. Please allow me to connect you with our reception staff to check real-time availability for your stay.
+
+[ASK_CHECKIN_TIME]
+Our standard check-in time is 12:00 PM. Early check-in may be available based on room availability.
+
+[ASK_CHECKOUT_TIME]
+Check-out time is 11:00 AM. Late check-out can be arranged subject to availability and may involve additional charges.
+
+[ASK_WIFI]
+Yes, we provide complimentary high-speed WiFi in all rooms and common areas of the hotel.
+
+[ASK_PARKING]
+Yes, free parking is available for hotel guests. Parking is subject to availability.
+
+[ASK_LOCATION]
+We are conveniently located near the city center. The exact address and directions can be shared by our reception team for your convenience.
+
+[ASK_CANCELLATION_POLICY]
+Cancellations made up to 24 hours before the check-in date are usually free of charge. For late cancellations, charges may apply depending on the booking terms.
+
+[ASK_LATE_CHECKOUT]
+Late check-out requests are subject to availability. Please speak with our reception staff to check the possibility for your booking.
+
+[ASK_CONTACT]
+You can contact our reception desk directly by phone. Would you like me to connect you now?
+
+[EXIT_CONVERSATION]
+Thank you for calling. Have a pleasant day!
+
+[CONFIRMATION]
+Is there anything else I can help you with?
+
+[TALK_TO_HUMAN]
+Sure, I’ll connect you to our reception staff for further assistance.
+[ACK_PHRASES] = [
+    "Just a moment please.",
+    "Certainly, one moment.",
+    "Sure, let me check that for you."
+]

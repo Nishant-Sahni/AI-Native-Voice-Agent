@@ -1,0 +1,17 @@
+{
+    "responses": {
+        "mandir_distance": "Hotel Mandir se 200 meter door hai.",
+        "kirti_mandir_distance": "Kirti Mandir 50 meter door hai.",
+        "location": "Hotel Radhe Bihari College ke samne located hai.",
+        "lift": "Yes, lift available hai.",
+        "hot_water": "Geyser aur kettle available hai.",
+        "ac_rooms": "Fully AC rooms only available hain.",
+        "tv": "Yes, TV available hai.",
+        "balcony": "Balcony sirf three bed room mai available hai, mandir view ke saath.",
+        "light_backup": "Yes, light backup available hai.",
+        "parking": "Yes, personal parking available hai.",
+        "taxi": "Yes, pickup and drop ke liye taxi available ho jayegi.",
+        "pricing": "Double bed 2000 Rs, Triple bed 2500 Rs, Family room 3000 Rs.",
+        "availability": "Room availability aur final price situation based hai."
+    }
+}

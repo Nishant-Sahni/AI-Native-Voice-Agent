@@ -1,0 +1,132 @@
+{
+  "ASK_MENU": [
+    "show me the menu",
+    "what food do you serve",
+    "kya khana banate ho",
+    "khane ka menu kya hai",
+    "do you have dinner",
+    "food options kya hain"
+  ],
+
+  "ASK_BREAKFAST": [
+    "is breakfast included",
+    "breakfast free hai kya",
+    "do you serve breakfast",
+    "subah ka nashta milega",
+    "breakfast timings kya hai"
+  ],
+
+  "ASK_ROOM_PRICE": [
+    "room price",
+    "room charges kya hai",
+    "how much is a room",
+    "kamra kitne ka hai",
+    "price for one night"
+  ],
+
+  "ASK_ROOM_AVAILABILITY": [
+    "do you have rooms available",
+    "is there any room available today",
+    "aaj room milega kya",
+    "availability batao",
+    "rooms available hain kya"
+  ],
+
+  "ASK_CHECKIN_TIME": [
+    "checkin time",
+    "what time is check in",
+    "check in kab hai",
+    "arrival time kya hai"
+  ],
+
+  "ASK_CHECKOUT_TIME": [
+    "checkout time",
+    "what time is check out",
+    "check out kab hai",
+    "departure time kya hai"
+  ],
+
+  "ASK_WIFI": [
+    "is wifi available",
+    "free wifi hai kya",
+    "internet milega kya",
+    "wifi chalta hai",
+    "do you have internet"
+  ],
+
+  "ASK_PARKING": [
+    "do you have parking",
+    "parking available hai kya",
+    "car parking milegi",
+    "parking facility hai"
+  ],
+
+  "ASK_LOCATION": [
+    "where are you located",
+    "hotel location",
+    "address kya hai",
+    "how to reach the hotel",
+    "hotel kaha hai"
+  ],
+
+  "ASK_CANCELLATION_POLICY": [
+    "cancellation policy",
+    "can I cancel my booking",
+    "booking cancel ho sakti hai",
+    "cancellation charges kya hai"
+  ],
+
+  "ASK_LATE_CHECKOUT": [
+    "late checkout possible hai",
+    "can I check out late",
+    "late checkout milega",
+    "checkout late kar sakte hai"
+  ],
+
+  "ASK_CONTACT": [
+    "contact number",
+    "hotel phone number",
+    "how can I contact you",
+    "reception ka number do"
+  ],
+
+  "TALK_TO_HUMAN": [
+    "talk to receptionist",
+    "connect me to staff",
+    "insaan se baat karni hai",
+    "front desk se baat karao"
+  ],
+  "EXIT_CONVERSATION": [
+  "exit",
+  "quit",
+  "goodbye",
+  "bye",
+  "bye bye",
+  "okay goodbye",
+  "thanks bye",
+  "okay exit"
+],
+
+"CONFIRMATION": [
+  "okay",
+  "ok",
+  "haan",
+  "theek hai",
+  "alright",
+  "fine",
+  "got it",
+  "samajh gaya"
+],
+
+"BOOK_ROOM": [
+  "i want to book a room",
+  "book a room",
+  "room book karna hai",
+  "i need a room",
+  "make a booking",
+  "i want to reserve a room",
+  "room chahiye"
+]
+
+
+}

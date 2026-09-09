@@ -1,0 +1,37 @@
+{
+    "agent_name": "HotelSalesAgent",
+    "knowledge_base": {
+        "hotel_name": "Triveni Hotel and Restaurant",
+        "welcome_message": "Radhe Radhe, Triveni Hotel and Restaurant mai aapka swagat hai",
+        "location": {
+            "mandir_distance": "200 meter",
+            "kirti_mandir_distance": "50 meter",
+            "college_reference": "Radhe Bihari College ke samne"
+        },
+        "amenities": {
+            "lift_available": true,
+            "hot_water": "Geyser aur kettle available",
+            "ac_rooms": "Fully AC rooms only",
+            "tv_available": true,
+            "balcony_details": "Only three bed room mai balcony available hai",
+            "balcony_view": "Mandir ka view",
+            "light_backup": true,
+            "personal_parking": true,
+            "taxi_service": true
+        },
+        "room_pricing": {
+            "double_bed": 2000,
+            "triple_bed": 2500,
+            "family_room": 3000
+        },
+        "availability": {
+            "room_status": "Situation Based",
+            "final_price": "Situation Based"
+        }
+    },
+    "rules": {
+        "dynamic_pricing": true,
+        "availability_check": true
+    },
+    "conversation_style": "Polite, devotional greeting with persuasive tone"
+}

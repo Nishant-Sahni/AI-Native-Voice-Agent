@@ -1,201 +1,196 @@
-# 🏨 Hotel Voice Receptionist AI
+# Hotel Voice Receptionist
 
-An AI-powered voice receptionist for hotels that handles inbound calls, answers guest FAQs, and collects booking requests — all through natural speech. Built with a modular pipeline: speech-to-text → intent classification → response generation → text-to-speech, backed by a FastAPI service and PostgreSQL.
+> A voice agent that answers hotel guests, handles common questions, and takes booking requests.
 
----
-
-## ✨ Features
-
-- **Real-time voice interaction** — listens to guests via microphone, responds with synthesized speech
-- **Multilingual intent detection** — understands both English and Hindi/Hinglish queries (e.g. *"room book karna hai"*, *"wifi chalta hai"*)
-- **FAQ answering** — handles 13+ common hotel queries (menu, pricing, check-in/out times, parking, WiFi, cancellations, and more)
-- **Booking flow** — captures check-in date and number of nights, logs booking to the database
-- **Full call logging** — every conversation (user + AI messages) is persisted per call with timestamps and outcomes
-- **Streamlit dashboard** — dev-only UI for testing and debugging agent workflows
+`Python` · `faster-whisper` · `Sentence-Transformers` · `Coqui TTS` · `FastAPI` · `PostgreSQL` · `Streamlit`
 
 ---
 
-## 🗂️ Project Structure
+## Overview
+
+The project is an AI-powered voice receptionist for hotels. It takes inbound calls, answers guest FAQs and collects booking requests through natural speech.
+
+The pipeline is modular: speech-to-text, then intent classification, then response generation, then text-to-speech. A FastAPI service and a PostgreSQL database sit behind it.
+
+---
+
+## Features
+
+| Feature | What it does |
+|---|---|
+| Voice interaction | Listens to the guest through the microphone and replies with synthesized speech |
+| Multilingual intents | Understands English and Hindi/Hinglish, for example *"room book karna hai"* or *"wifi chalta hai"* |
+| FAQ answers | Covers 13+ common hotel queries: menu, pricing, check-in/out times, parking, WiFi, cancellations and more |
+| Booking flow | Captures the check-in date and the number of nights, and logs the booking to the database |
+| Call logging | Stores every user and AI message for each call, with timestamps and outcomes |
+| Dev dashboard | A Streamlit UI to test and debug agent workflows |
+
+---
+
+## Architecture
+
+```
+mic ──▶ STT ──▶ intent classifier ──┬──▶ FAQ intent ──▶ retriever ──▶ TTS ──▶ speaker
+                                    │
+                                    └──▶ BOOK_ROOM ──▶ booking flow (date, nights) ──▶ database
+```
+
+Every turn goes to the backend at `/calls/{id}/messages` with a sender (`USER` or `AI`). A call ends with one outcome: `ANSWERED`, `BOOKING_STARTED` or `ESCALATED`.
+
+---
+
+## Repository layout
 
 ```
 src/
-├── agentic/                  # Core AI pipeline
-│   ├── stt.py                # Speech-to-text (faster-whisper)
-│   ├── tts.py                # Text-to-speech (Coqui TTS / Tacotron2)
-│   ├── intent_classifier.py  # Semantic intent detection via embeddings
-│   ├── embedder.py           # Sentence embedding wrapper
-│   ├── retriever.py          # Knowledge base lookup
-│   └── backend_client.py     # HTTP client for the FastAPI backend
-├── app/                      # FastAPI backend service
-│   ├── main.py               # API routes (calls, messages, bookings)
-│   └── helper/
-│       ├── database.py       # SQLAlchemy engine & session
-│       ├── models.py         # ORM models
-│       └── schemas.py        # Pydantic schemas
-├── dashboard/
-│   └── dashboard.py          # Streamlit dev dashboard
-├── data/
-│   ├── intents.json          # Intent → example utterances mapping
-│   └── knowledge.txt         # Canned responses per intent
-├── infrastructure/
-│   ├── hotel.sql             # PostgreSQL schema (hotels, rooms, calls, bookings)
-│   └── insert.sql            # Seed data
-├── input/
-│   ├── calls.json            # Sample call configs
-│   └── generic.json          # Generic config
-├── voice_app.py              # Main voice loop entry point
-├── app.py                    # Alt entry point
+├── voice_app.py              →  main voice loop (entry point)
+├── app.py                    →  alternative entry point
 ├── requirements.txt
+├── agentic/                  →  core AI pipeline
+│   ├── stt.py                →  speech-to-text (faster-whisper)
+│   ├── tts.py                →  text-to-speech (Coqui TTS, Tacotron2)
+│   ├── intent_classifier.py  →  semantic intent detection with embeddings
+│   ├── embedder.py           →  sentence embedding wrapper
+│   ├── retriever.py          →  knowledge base lookup
+│   └── backend_client.py     →  HTTP client for the FastAPI backend
+├── app/                      →  FastAPI backend
+│   ├── main.py               →  routes for calls, messages and bookings
+│   └── helper/
+│       ├── database.py       →  SQLAlchemy engine and session
+│       ├── models.py         →  ORM models
+│       └── schemas.py        →  Pydantic schemas
+├── dashboard/
+│   └── dashboard.py          →  Streamlit dev dashboard
+├── data/
+│   ├── intents.json          →  intent name to example phrases
+│   └── knowledge.txt         →  canned response for each intent
+├── infrastructure/
+│   ├── hotel.sql             →  PostgreSQL schema (hotels, rooms, calls, bookings)
+│   └── insert.sql            →  seed data
+├── input/
+│   ├── calls.json            →  sample call configs
+│   └── generic.json          →  generic config
 └── docs/
     └── architecture.md
 ```
 
 ---
 
-## 🔁 How It Works
+## Tech stack
 
-```
-Caller speaks
-    │
-    ▼
-[STT] faster-whisper transcribes audio
-    │
-    ▼
-[Intent Classifier] embeds text → cosine similarity against intent vectors
-    │
-    ├── FAQ intent detected  →  [Retriever] looks up canned response  →  [TTS] speaks reply
-    │
-    └── BOOK_ROOM intent  →  enters booking flow  →  collects date + nights  →  logs to DB
-```
-
-All turns are logged to the backend (`/calls/{id}/messages`) with sender (`USER` or `AI`). Calls are closed with an outcome: `ANSWERED`, `BOOKING_STARTED`, or `ESCALATED`.
+- **Speech-to-text:** [faster-whisper](https://github.com/guillaumekln/faster-whisper), `small` model, `int8`
+- **Text-to-speech:** [Coqui TTS](https://github.com/coqui-ai/TTS), Tacotron2-DDC trained on LJSpeech
+- **Intent classification:** [sentence-transformers](https://www.sbert.net/), FAISS and cosine similarity
+- **Backend API:** FastAPI with Uvicorn
+- **Database:** PostgreSQL through SQLAlchemy and psycopg2
+- **Dashboard:** Streamlit
+- **Audio I/O:** sounddevice and numpy
 
 ---
 
-## 🛠️ Tech Stack
+## Getting started
 
-| Layer | Technology |
+**You need:** Python 3.10+, PostgreSQL running locally, and a microphone with speakers or a headset.
+
+Run every command below from the `src/` folder.
+
+1. **Install the dependencies**
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+   Coqui TTS and faster-whisper download their model weights on the first run (a few hundred MB each).
+
+2. **Create the database**
+
+   Create a PostgreSQL database, then load the schema and the seed data:
+
+   ```bash
+   psql -U <your_user> -d <your_db> -f infrastructure/hotel.sql
+   psql -U <your_user> -d <your_db> -f infrastructure/insert.sql
+   ```
+
+3. **Set the environment variables**
+
+   Create a `.env` file in `src/`:
+
+   ```env
+   DATABASE_URL=postgresql://<user>:<password>@localhost:5432/<dbname>
+   ```
+
+4. **Start the backend API**
+
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+
+   The API runs at `http://127.0.0.1:8000`. The interactive docs are at `/docs`.
+
+5. **Start the voice receptionist** in a second terminal
+
+   ```bash
+   python voice_app.py
+   ```
+
+   The agent greets the caller and starts to listen.
+
+6. **Optional: start the dev dashboard**
+
+   ```bash
+   streamlit run dashboard/dashboard.py
+   ```
+
+---
+
+## API reference
+
+| Endpoint | Purpose |
 |---|---|
-| Speech-to-Text | [faster-whisper](https://github.com/guillaumekln/faster-whisper) (`small` model, `int8`) |
-| Text-to-Speech | [Coqui TTS](https://github.com/coqui-ai/TTS) — Tacotron2-DDC / LJSpeech |
-| Intent Classification | [sentence-transformers](https://www.sbert.net/) + FAISS + cosine similarity |
-| Backend API | FastAPI + Uvicorn |
-| Database | PostgreSQL (via SQLAlchemy + psycopg2) |
-| Dev Dashboard | Streamlit |
-| Audio I/O | sounddevice + numpy |
+| `POST /calls/start` | Start a new call session |
+| `POST /calls/{id}/messages` | Log a message (USER or AI) |
+| `POST /calls/{id}/end` | End a call with an outcome |
+| `GET /calls` | List all calls |
+| `GET /calls/{id}/messages` | Get the full transcript of a call |
+| `POST /bookings/start` | Create an in-progress booking |
+| `PATCH /bookings/{id}` | Update booking fields (date, nights, status) |
+| `GET /bookings` | List all bookings |
 
 ---
 
-## ⚙️ Setup
+## Intent system
 
-### Prerequisites
+`data/intents.json` maps each intent name to a list of example phrases in English and Hindi/Hinglish. At startup, the system embeds the phrases and averages them into one vector per intent. It embeds each incoming sentence and matches it by cosine similarity. The default threshold is `0.35` and you can change it.
 
-- Python 3.10+
-- PostgreSQL running locally
-- A microphone + speakers (or headset)
+| Group | Intents |
+|---|---|
+| Hotel questions | `ASK_MENU`, `ASK_BREAKFAST`, `ASK_ROOM_PRICE`, `ASK_ROOM_AVAILABILITY`, `ASK_CHECKIN_TIME`, `ASK_CHECKOUT_TIME`, `ASK_WIFI`, `ASK_PARKING`, `ASK_LOCATION`, `ASK_CANCELLATION_POLICY`, `ASK_LATE_CHECKOUT`, `ASK_CONTACT` |
+| Booking | `BOOK_ROOM` |
+| Conversation control | `TALK_TO_HUMAN`, `EXIT_CONVERSATION`, `CONFIRMATION` |
 
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/AyushTyagi2/startup101
-cd startup101/src
-```
-
-### 2. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-> **Note:** Coqui TTS and faster-whisper will download model weights on first run (~few hundred MB each).
-
-### 3. Set up the database
-
-Create a PostgreSQL database and run the schema:
-
-```bash
-psql -U <your_user> -d <your_db> -f infrastructure/hotel.sql
-psql -U <your_user> -d <your_db> -f infrastructure/insert.sql
-```
-
-### 4. Configure environment variables
-
-Create a `.env` file in `src/`:
-
-```env
-DATABASE_URL=postgresql://<user>:<password>@localhost:5432/<dbname>
-```
-
-### 5. Start the backend API
-
-```bash
-uvicorn app.main:app --reload
-```
-
-The API will be available at `http://127.0.0.1:8000`. Interactive docs at `/docs`.
-
-### 6. Run the voice receptionist
-
-In a separate terminal:
-
-```bash
-python voice_app.py
-```
-
-The agent will greet the caller and begin listening.
-
-### 7. (Optional) Run the dev dashboard
-
-```bash
-streamlit run dashboard/dashboard.py
-```
+To add an intent, add an entry to `intents.json` and a matching response block to `data/knowledge.txt`.
 
 ---
 
-## 🔌 API Overview
+## LLM experiments
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/calls/start` | Start a new call session |
-| `POST` | `/calls/{id}/messages` | Log a message (USER or AI) |
-| `POST` | `/calls/{id}/end` | End a call with an outcome |
-| `GET` | `/calls` | List all calls |
-| `GET` | `/calls/{id}/messages` | Get full transcript for a call |
-| `POST` | `/bookings/start` | Create an in-progress booking |
-| `PATCH` | `/bookings/{id}` | Update booking fields (date, nights, status) |
-| `GET` | `/bookings` | List all bookings |
+During development, LLMs were tested as an alternative to rule-based cleaning and extraction of raw call and booking data. Two backends were tried. Both stay outside the main pipeline for now. Integration is planned with the RAG migration.
 
----
+<details>
+<summary><b>Ollama with Phi-3 (local)</b></summary>
 
-## 🧠 Intent System
+<br>
 
-Intents are defined in `data/intents.json` as a map of intent name → list of example phrases (English + Hindi/Hinglish). At startup, these are embedded and averaged into a single vector per intent. Incoming speech is embedded and matched by cosine similarity with a configurable threshold (default `0.35`).
+[Phi-3](https://ollama.com/library/phi3) ran locally through [Ollama](https://ollama.com/). It is fully offline and costs nothing, so it suits light extraction tasks on a laptop.
 
-**Supported intents:** `ASK_MENU`, `ASK_BREAKFAST`, `ASK_ROOM_PRICE`, `ASK_ROOM_AVAILABILITY`, `ASK_CHECKIN_TIME`, `ASK_CHECKOUT_TIME`, `ASK_WIFI`, `ASK_PARKING`, `ASK_LOCATION`, `ASK_CANCELLATION_POLICY`, `ASK_LATE_CHECKOUT`, `ASK_CONTACT`, `TALK_TO_HUMAN`, `EXIT_CONVERSATION`, `CONFIRMATION`, `BOOK_ROOM`
-
-To add a new intent: add an entry to `intents.json` and a corresponding response block in `data/knowledge.txt`.
-
----
-
-## 🧪 LLM Experiments — Data Cleaning & Extraction
-
-During development, LLMs were explored as an alternative to rule-based data cleaning and structured extraction from raw call/booking data. Two backends were tested:
-
-### Ollama — Local (Phi-3)
-
-[Phi-3](https://ollama.com/library/phi3) was run locally via [Ollama](https://ollama.com/) for fully offline, zero-cost inference. Suitable for lightweight extraction tasks on a laptop.
-
-**Setup:**
+Install Ollama (macOS/Linux) and pull the model:
 
 ```bash
-# Install Ollama (macOS/Linux)
 curl -fsSL https://ollama.com/install.sh | sh
-
-# Pull the Phi-3 model
 ollama pull phi3
 ```
 
-**Example usage:**
+Example:
 
 ```python
 import requests
@@ -209,27 +204,30 @@ def extract_with_ollama(raw_text: str) -> dict:
     return response.json()["response"]
 ```
 
-> Phi-3 worked well for simple structured extraction. Latency was acceptable on CPU for short prompts.
+Phi-3 worked well for simple structured extraction. Latency was acceptable on CPU for short prompts.
 
----
+</details>
 
-### Google Gemini — API
+<details>
+<summary><b>Google Gemini (API)</b></summary>
 
-[Gemini](https://ai.google.dev/) was tested as a cloud-based alternative for higher accuracy on ambiguous or noisy inputs.
+<br>
 
-**Setup:**
+[Gemini](https://ai.google.dev/) was tested as a cloud option for higher accuracy on ambiguous or noisy input.
+
+Install the client:
 
 ```bash
 pip install google-generativeai
 ```
 
-Add to `.env`:
+Add the key to `.env`:
 
 ```env
 GEMINI_API_KEY=your_api_key_here
 ```
 
-**Example usage:**
+Example:
 
 ```python
 import google.generativeai as genai
@@ -245,33 +243,31 @@ def extract_with_gemini(raw_text: str) -> str:
     return response.text
 ```
 
----
+</details>
 
-### Comparison
+**Comparison**
 
 | | Ollama (Phi-3) | Gemini API |
 |---|---|---|
-| Cost | Free (local) | Pay-per-use |
+| Cost | Free (local) | Pay per use |
 | Privacy | Fully local | Cloud |
 | Speed | Moderate (CPU) | Fast |
-| Accuracy | Good for simple inputs | Better on ambiguous text |
-| Setup | Requires Ollama install | Requires API key |
-
-Both approaches were used experimentally and are not wired into the main pipeline yet. Integration is planned as part of the RAG migration.
+| Accuracy | Good for simple input | Better on ambiguous text |
+| Setup | Install Ollama | Get an API key |
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
-- [ ] Replace static knowledge base with a RAG (Retrieval-Augmented Generation) pipeline
-- [ ] Integrate vector database (e.g. Qdrant, Pinecone) for dynamic knowledge retrieval
-- [ ] Replace Streamlit dashboard with a production frontend
-- [ ] Multi-agent orchestration support
-- [ ] Caller phone number identification & returning-guest detection
-- [ ] Real-time availability check via hotel PMS integration
+- [ ] Replace the static knowledge base with a RAG (Retrieval-Augmented Generation) pipeline
+- [ ] Add a vector database (for example Qdrant or Pinecone) for dynamic retrieval
+- [ ] Replace the Streamlit dashboard with a production frontend
+- [ ] Support multi-agent orchestration
+- [ ] Identify the caller by phone number and detect returning guests
+- [ ] Check room availability in real time through the hotel PMS
 
 ---
 
-## 📄 License
+## License
 
 Internal use only.
